@@ -1,11 +1,9 @@
 package collections.mymap;
-
-import java.security.KeyException;
+import java.util.Objects;
 
 public class MyHashMap <Key, Value> implements HashMapInterface<Key, Value> {
-
-    private Node<Key, Value> next = null;
-    private Node<Key, Value>[] nodes = new Node[0];
+    private Node next = null;
+    private int currSize = 0;
 
     private static class Node<Key, Value> {
         private Node<Key, Value> next;
@@ -33,70 +31,49 @@ public class MyHashMap <Key, Value> implements HashMapInterface<Key, Value> {
 
     public void put(Key key, Value value) {
 
-        int newLength = nodes.length + 1;
+        Node nextNode = new Node(key, value);
+        Node lastNode = next;
 
-        Node<Key, Value>[] temp = new Node[newLength];
-        Node<Key, Value> nextNode = new Node<>(key, value);
 
-        if (nodes.length == 0){
-            nodes = temp;
-        } else{
-            for (int i = 0; i < nodes.length; i++){
-                temp[i] = nodes[i];
-            }
-        }
-
-        Node<Key, Value> node = temp[0];
-
-        if (node == null){
+        if (next == null){
             next = nextNode;
-            temp[0] = next;
-            nodes = temp;
         } else{
 
-            while(node.next != null){
+            while(lastNode.next != null){
 
-                if (node.getKey().equals(key)){
-                    node.setValue(value);
-                    return;
+                if(lastNode.getKey().equals(key)){
+                    lastNode.setValue(value);
                 }
 
-                node = node.next;
-
+                lastNode = lastNode.next;
             }
 
-            if (node.getKey().equals(key)){
-                node.setValue(value);
-                return;
+            lastNode.next = nextNode;
+
+            if(lastNode.getKey().equals(key)){
+                lastNode.setValue(value);
             }
-
-            node.next = nextNode;
-
-            temp[newLength - 1] = node.next;
-
-            nodes = temp;
 
         }
+
+        currSize++;
 
     }
 
     public void remove(Key key) {
 
-        int index = getIndex(key);
-
-        if (index == -1){
-            return;
+        if (Objects.checkIndex(getIndexByKey(key), size()) == -1){
+            throw new IndexOutOfBoundsException();
         }
 
-        Node<Key, Value>[] ftemp = slice(0, index);
-        Node<Key, Value>[] stemp = slice(index + 1, nodes.length);
-
-
-        Node<Key, Value> prevNode = null,
-                lastNode = next,
-                nextNode = null;
+        int index = getIndexByKey(key);
 
         int idx = 0;
+
+        Node<Key, Value> prevNode = null,
+                         lastNode = next,
+                         nextNode = null;
+
 
         while(lastNode.next != null){
 
@@ -115,79 +92,65 @@ public class MyHashMap <Key, Value> implements HashMapInterface<Key, Value> {
 
         if (prevNode != null){
             prevNode.next = nextNode;
-        } else{
+        } else {
             next = nextNode;
         }
 
-        int newLength = ftemp.length + stemp.length;
-        Node<Key, Value>[] temp = new Node[newLength];
-
-        int j = 0;
-
-        for (int i = 0; i < temp.length; i++){
-
-            if(i < ftemp.length){
-                temp[i] = ftemp[i];
-            } else{
-                temp[i] = stemp[j++];
-            }
-
-        }
-
-        nodes = temp;
+        currSize--;
 
     }
 
     public void clear() {
         next = null;
-        nodes = new Node[0];
     }
 
-    public int size() {
-       return nodes.length;
+    public int size(){
+        return currSize;
     }
 
-    public Value get(Key key){
+    public Object get(Key key){
 
-        for(Node<Key, Value> node: nodes){
-            if (node.getKey().equals(key)){
-                return node.getValue();
+        Node lastNode = next;
+
+        while(lastNode.next != null){
+
+            if(lastNode.getKey().equals(key)){
+                return lastNode.getValue();
             }
+
+            lastNode = lastNode.next;
         }
 
-        return null;
+        if(lastNode.getKey().equals(key)){
+            return lastNode.getValue();
+        }
+
+        throw new IllegalArgumentException("Invalid key");
 
     }
 
 
-    private int getIndex(Key key){
+    private int getIndexByKey(Key key){
 
         int i = 0;
 
-        for(Node<Key, Value> node: nodes){
-            if (node.getKey().equals(key)){
+        Node<Key, Value> lastNode = next;
+
+        while(lastNode.next != null){
+
+            if(lastNode.getKey().equals(key)){
                 return i;
             }
+
             i++;
+            lastNode = lastNode.next;
         }
 
-        return -1;
-
-    }
-
-    private Node[] slice(int startIndex, int endIndex){
-
-        int newLength = endIndex - startIndex;
-
-        Node<Key, Value>[] temp = new Node[newLength];
-
-        int j = 0;
-
-        for (int i = startIndex; i < endIndex; i++){
-            temp[j++] = nodes[i];
+        if(lastNode.getKey().equals(key)){
+            return i;
         }
 
-        return temp;
+        throw new IllegalArgumentException("Invalid key");
 
     }
 

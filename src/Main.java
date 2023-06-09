@@ -4,10 +4,11 @@ import collections.mymap.MyHashMap;
 import collections.myqueue.MyQueue;
 import collections.myqueue.MyStack;
 
-import java.security.KeyException;
+import java.util.Arrays;
+
 
 public class Main {
-    public static void main(String[] args) throws KeyException {
+    public static void main(String[] args) {
 
         MyArrayList<String> arrayList = new MyArrayList<>();
         MyLinkedList<Integer> linkedList = new MyLinkedList<>();

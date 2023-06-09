@@ -1,41 +1,64 @@
 package collections.mylist;
+import java.util.Objects;
 
 public class MyArrayList <Key> implements ListInterface <Key> {
 
-    private Key[] objects = (Key[]) new Object[0];
-    public void add(Key value){
+    private static final int defaultSize = 10;
+    private int initialSize;
+    private Object[] objects;
 
-        Key[] temp = (Key[]) new Object[objects.length + 1];
+    public MyArrayList(){
+        this(defaultSize);
+    }
 
-        if (objects.length != 0){
-            for(int i = 0; i < objects.length; i++){
-                temp[i] = objects[i];
-            }
+    public MyArrayList(int size){
+
+        if (size < 0){
+            throw new IllegalArgumentException("Invalid capacity");
         }
 
-        temp[temp.length - 1] = value;
-        objects = temp;
+        objects = new Object[initialSize = size];
+
+    }
+
+
+    public void add(Key value){
+
+        if (size() + 1 > initialSize){
+
+            Object[] temp = new Object[initialSize *= 2];
+            System.arraycopy(objects, 0, temp, 0, objects.length);
+
+            temp[objects.length] = value;
+            objects = temp;
+
+
+        } else {
+            objects[size()] = value;
+        }
+
+
     }
 
     public void remove(int index){
 
-        if (index < 0 || index >= size()){
-            return;
+        if (Objects.checkIndex(index, size()) == -1){
+            throw new IndexOutOfBoundsException();
         }
 
-        Key[] firstPartArray = slice(0, index);
-        Key[] secondPartArray = slice(index + 1, size());
+        Object[] temp;
 
-        Key[] temp = (Key[]) new Object[firstPartArray.length + secondPartArray.length];
+        if (size() > initialSize){
+            temp = new Object[objects.length - 1];
+        } else{
+            temp = new Object[objects.length];
+        }
 
         int j = 0;
 
         for (int i = 0; i < temp.length; i++){
-            if(i < firstPartArray.length){
-                temp[i] = firstPartArray[i];
-            } else{
-                temp[i] = secondPartArray[j++];
-            }
+            if (index != i)
+                temp[j++] = objects[i];
         }
 
         objects = temp;
@@ -43,34 +66,29 @@ public class MyArrayList <Key> implements ListInterface <Key> {
     }
 
     public void clear(){
-        objects = (Key[]) new Object[0];
+        objects = new Object[0];
     }
 
     public int size(){
-        return objects.length;
-    }
 
-    public Key get(int index){
-        try {
-            return objects[index];
-        } catch (Exception e){
-            throw new IndexOutOfBoundsException("Invalid index.");
-        }
-    }
+        int i = 0;
 
-    private Key[] slice(int startIndex, int endIndex){
-
-        int length = endIndex - startIndex;
-        Key[] temp = (Key[]) new Object[length];
-
-        int j = 0;
-
-        for(int i = startIndex; i < endIndex; i++){
-            temp[j++] = objects[i];
+        for (Object object: objects) {
+            if (object != null)
+                i++;
         }
 
-        return temp;
+        return i;
 
+    }
+
+    public Object get(int index){
+
+        if (Objects.checkIndex(index, size()) == -1){
+            throw new IndexOutOfBoundsException();
+        }
+
+        return objects[index];
     }
 
 }

@@ -1,7 +1,10 @@
 package collections.mylist;
+import java.util.Objects;
 
 public class MyLinkedList <Key> implements ListInterface<Key> {
     private Node<Key> next = null;
+    private int currSize = 0;
+
     private static class Node<Key> {
         private Node<Key> next;
         private Node<Key> prev;
@@ -15,7 +18,9 @@ public class MyLinkedList <Key> implements ListInterface<Key> {
         }
     }
 
+
     public void add(Key key){
+
         Node<Key> nextNode = new Node<>(key);
 
         if (next == null){
@@ -30,13 +35,16 @@ public class MyLinkedList <Key> implements ListInterface<Key> {
             lastNode.next = nextNode;
             nextNode.prev = lastNode;
         }
+
+        currSize++;
+
     }
 
 
     public void remove(int index){
 
-        if (index < 0 || index >= size()){
-            throw new IndexOutOfBoundsException("Invalid index.");
+        if (Objects.checkIndex(index, size()) == -1){
+            throw new IndexOutOfBoundsException();
         }
 
         int idx = 0;
@@ -71,6 +79,8 @@ public class MyLinkedList <Key> implements ListInterface<Key> {
             nextNode.prev = prevNode;
         }
 
+        currSize--;
+
     }
     public void clear(){
         next = null;
@@ -78,13 +88,13 @@ public class MyLinkedList <Key> implements ListInterface<Key> {
 
     public Key get(int index){
 
-        if (index < 0 || index >= size()){
-            throw new IndexOutOfBoundsException("Invalid index.");
+        if (Objects.checkIndex(index, size()) == -1){
+            throw new IndexOutOfBoundsException();
         }
 
         int i = 0;
 
-       Node<Key> lastNode = next;
+        Node<Key> lastNode = next;
 
         while(lastNode.next != null){
             if(i++ == index){
@@ -98,19 +108,7 @@ public class MyLinkedList <Key> implements ListInterface<Key> {
     }
 
     public int size() {
-
-        int i = 0;
-
-        if (next != null){
-            i++;
-            Node<Key> lastNode = next;
-            while(lastNode.next != null){
-                lastNode = lastNode.next;
-                i++;
-            }
-        }
-
-        return i;
+        return currSize;
     }
 
 }
