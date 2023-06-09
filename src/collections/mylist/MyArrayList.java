@@ -2,58 +2,39 @@ package collections.mylist;
 import java.util.Objects;
 
 public class MyArrayList <Key> implements ListInterface <Key> {
-
     private static final int defaultSize = 10;
-    private int initialSize;
     private Object[] objects;
+    private int size = 0;
 
     public MyArrayList(){
         this(defaultSize);
     }
 
     public MyArrayList(int size){
-
         if (size < 0){
             throw new IllegalArgumentException("Invalid capacity");
         }
 
-        objects = new Object[initialSize = size];
-
+        objects = new Object[size];
     }
 
-
     public void add(Key value){
-
-        if (size() + 1 > initialSize){
-
-            Object[] temp = new Object[initialSize *= 2];
-            System.arraycopy(objects, 0, temp, 0, objects.length);
-
-            temp[objects.length] = value;
-            objects = temp;
-
-
-        } else {
-            objects[size()] = value;
+        if (size >= objects.length){
+            resizeArray(objects.length * 2);
         }
 
+        objects[size++] = value;
+    }
 
+    private void resizeArray(int newSize){
+        Object[] newArray = new Object[newSize];
+        System.arraycopy(objects, 0, newArray, 0, size);
+        objects = newArray;
     }
 
     public void remove(int index){
-
-        if (Objects.checkIndex(index, size()) == -1){
-            throw new IndexOutOfBoundsException();
-        }
-
-        Object[] temp;
-
-        if (size() > initialSize){
-            temp = new Object[objects.length - 1];
-        } else{
-            temp = new Object[objects.length];
-        }
-
+        Objects.checkIndex(index, size);
+        Object[] temp = new Object[objects.length - 1];
         int j = 0;
 
         for (int i = 0; i < temp.length; i++){
@@ -61,34 +42,21 @@ public class MyArrayList <Key> implements ListInterface <Key> {
                 temp[j++] = objects[i];
         }
 
+        size--;
         objects = temp;
+    }
 
+    public int size(){
+        return size;
     }
 
     public void clear(){
         objects = new Object[0];
-    }
-
-    public int size(){
-
-        int i = 0;
-
-        for (Object object: objects) {
-            if (object != null)
-                i++;
-        }
-
-        return i;
-
+        size = 0;
     }
 
     public Object get(int index){
-
-        if (Objects.checkIndex(index, size()) == -1){
-            throw new IndexOutOfBoundsException();
-        }
-
+        Objects.checkIndex(index, size);
         return objects[index];
     }
-
 }

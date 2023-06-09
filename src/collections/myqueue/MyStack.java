@@ -2,7 +2,6 @@ package collections.myqueue;
 import collections.mylist.MyLinkedList;
 
 public class MyStack<Key> extends MyLinkedList<Key> implements StackInterface<Key> {
-
     public void push(Key key) { add(key); }
 
     public Key peek() {

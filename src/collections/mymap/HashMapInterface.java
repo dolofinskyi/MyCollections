@@ -1,6 +1,6 @@
 package collections.mymap;
 
-public interface HashMapInterface <Key, Value>{
+interface HashMapInterface <Key, Value>{
     void put(Key key, Value value);
     void remove(Key key);
     void clear();

@@ -1,6 +1,6 @@
 package collections.myqueue;
 
-public interface StackInterface<Key> {
+interface StackInterface<Key> {
     void push(Key value);
     void remove(int index);
     void clear();

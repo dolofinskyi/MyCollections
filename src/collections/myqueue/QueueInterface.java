@@ -1,6 +1,6 @@
 package collections.myqueue;
 
-public interface QueueInterface<Key>{
+interface QueueInterface<Key>{
     void add(Key key);
     void clear();
     int size();

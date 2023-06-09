@@ -3,7 +3,7 @@ import java.util.Objects;
 
 public class MyLinkedList <Key> implements ListInterface<Key> {
     private Node<Key> next = null;
-    private int currSize = 0;
+    private int size = 0;
 
     private static class Node<Key> {
         private Node<Key> next;
@@ -20,7 +20,6 @@ public class MyLinkedList <Key> implements ListInterface<Key> {
 
 
     public void add(Key key){
-
         Node<Key> nextNode = new Node<>(key);
 
         if (next == null){
@@ -36,16 +35,12 @@ public class MyLinkedList <Key> implements ListInterface<Key> {
             nextNode.prev = lastNode;
         }
 
-        currSize++;
-
+        size++;
     }
 
 
     public void remove(int index){
-
-        if (Objects.checkIndex(index, size()) == -1){
-            throw new IndexOutOfBoundsException();
-        }
+        Objects.checkIndex(index, size);
 
         int idx = 0;
 
@@ -79,21 +74,17 @@ public class MyLinkedList <Key> implements ListInterface<Key> {
             nextNode.prev = prevNode;
         }
 
-        currSize--;
-
+        size--;
     }
     public void clear(){
         next = null;
+        size = 0;
     }
 
     public Key get(int index){
-
-        if (Objects.checkIndex(index, size()) == -1){
-            throw new IndexOutOfBoundsException();
-        }
+        Objects.checkIndex(index, size());
 
         int i = 0;
-
         Node<Key> lastNode = next;
 
         while(lastNode.next != null){
@@ -108,7 +99,7 @@ public class MyLinkedList <Key> implements ListInterface<Key> {
     }
 
     public int size() {
-        return currSize;
+        return size;
     }
 
 }

@@ -2,8 +2,8 @@ package collections.mymap;
 import java.util.Objects;
 
 public class MyHashMap <Key, Value> implements HashMapInterface<Key, Value> {
-    private Node next = null;
-    private int currSize = 0;
+    private Node<Key, Value> next = null;
+    private int size = 0;
 
     private static class Node<Key, Value> {
         private Node<Key, Value> next;
@@ -30,10 +30,8 @@ public class MyHashMap <Key, Value> implements HashMapInterface<Key, Value> {
     }
 
     public void put(Key key, Value value) {
-
-        Node nextNode = new Node(key, value);
-        Node lastNode = next;
-
+        Node<Key, Value> nextNode = new Node<Key, Value>(key, value);
+        Node<Key, Value> lastNode = next;
 
         if (next == null){
             next = nextNode;
@@ -56,35 +54,27 @@ public class MyHashMap <Key, Value> implements HashMapInterface<Key, Value> {
 
         }
 
-        currSize++;
+        size++;
 
     }
 
     public void remove(Key key) {
-
-        if (Objects.checkIndex(getIndexByKey(key), size()) == -1){
-            throw new IndexOutOfBoundsException();
-        }
+        Objects.checkIndex(getIndexByKey(key), size);
 
         int index = getIndexByKey(key);
-
         int idx = 0;
 
         Node<Key, Value> prevNode = null,
                          lastNode = next,
                          nextNode = null;
 
-
         while(lastNode.next != null){
-
             if (idx == index - 1){
                 prevNode = lastNode;
             }
-
             if (idx == index){
                 nextNode = lastNode.next;
             }
-
             idx++;
             lastNode = lastNode.next;
 
@@ -96,28 +86,25 @@ public class MyHashMap <Key, Value> implements HashMapInterface<Key, Value> {
             next = nextNode;
         }
 
-        currSize--;
-
+        size--;
     }
 
     public void clear() {
         next = null;
+        size = 0;
     }
 
     public int size(){
-        return currSize;
+        return size;
     }
 
     public Object get(Key key){
-
-        Node lastNode = next;
+        Node<Key, Value> lastNode = next;
 
         while(lastNode.next != null){
-
             if(lastNode.getKey().equals(key)){
                 return lastNode.getValue();
             }
-
             lastNode = lastNode.next;
         }
 
@@ -126,22 +113,17 @@ public class MyHashMap <Key, Value> implements HashMapInterface<Key, Value> {
         }
 
         throw new IllegalArgumentException("Invalid key");
-
     }
 
 
     private int getIndexByKey(Key key){
-
+        Node<Key, Value> lastNode = next;
         int i = 0;
 
-        Node<Key, Value> lastNode = next;
-
         while(lastNode.next != null){
-
             if(lastNode.getKey().equals(key)){
                 return i;
             }
-
             i++;
             lastNode = lastNode.next;
         }
@@ -151,7 +133,5 @@ public class MyHashMap <Key, Value> implements HashMapInterface<Key, Value> {
         }
 
         throw new IllegalArgumentException("Invalid key");
-
     }
-
 }
