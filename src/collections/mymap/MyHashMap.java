@@ -3,7 +3,7 @@ package collections.mymap;
 public class MyHashMap <Key, Value> implements HashMapInterface<Key, Value> {
     private static final int defaultSize = 16;
     private int size = 0;
-    private final Node<Key, Value>[] table;
+    private Node<Key, Value>[] table;
 
     private static class Node<Key, Value> {
         private Node<Key, Value> next;
@@ -87,9 +87,7 @@ public class MyHashMap <Key, Value> implements HashMapInterface<Key, Value> {
     }
 
     public void clear() {
-        for (int i = 0; i < table.length; i++){
-            table[i] = null;
-        }
+        table = new Node[defaultSize];
         size = 0;
     }
 
