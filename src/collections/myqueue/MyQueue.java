@@ -11,6 +11,4 @@ public class MyQueue<Key> extends MyLinkedList<Key> implements QueueInterface<Ke
         remove(size() - 1);
         return lastNode;
     }
-
-
 }

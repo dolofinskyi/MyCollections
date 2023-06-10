@@ -20,48 +20,35 @@ public class MyLinkedList <Key> implements ListInterface<Key> {
 
 
     public void add(Key key){
-        Node<Key> nextNode = new Node<>(key);
-
+        Node<Key> newNode = new Node<>(key);
         if (next == null){
-            next = nextNode;
-            nextNode.prev = null;
+            next = newNode;
+            newNode.prev = null;
         } else{
-            Node<Key> lastNode = next;
-            while(lastNode.next != null){
-                lastNode = lastNode.next;
+            Node<Key> current = next;
+            while(current.next != null){
+                current = current.next;
             }
-
-            lastNode.next = nextNode;
-            nextNode.prev = lastNode;
+            current.next = current;
+            current.prev = current;
         }
-
         size++;
     }
 
 
     public void remove(int index){
         Objects.checkIndex(index, size);
-
+        Node<Key> prevNode = null, lastNode = next, nextNode = null;
         int idx = 0;
 
-        Node<Key> prevNode = null,
-                lastNode = next,
-                nextNode = null;
-
-
         while(lastNode.next != null){
-
             if (idx == index - 1){
                 prevNode = lastNode;
-            }
-
-            if (idx == index){
+            } else if (idx == index){
                 nextNode = lastNode.next;
             }
-
             idx++;
             lastNode = lastNode.next;
-
         }
 
         if (prevNode != null){
@@ -73,9 +60,9 @@ public class MyLinkedList <Key> implements ListInterface<Key> {
         if(nextNode != null){
             nextNode.prev = prevNode;
         }
-
         size--;
     }
+
     public void clear(){
         next = null;
         size = 0;
@@ -83,9 +70,8 @@ public class MyLinkedList <Key> implements ListInterface<Key> {
 
     public Key get(int index){
         Objects.checkIndex(index, size());
-
-        int i = 0;
         Node<Key> lastNode = next;
+        int i = 0;
 
         while(lastNode.next != null){
             if(i++ == index){
@@ -93,13 +79,10 @@ public class MyLinkedList <Key> implements ListInterface<Key> {
             }
             lastNode = lastNode.next;
         }
-
         return lastNode.getKey();
-
     }
 
     public int size() {
         return size;
     }
-
 }

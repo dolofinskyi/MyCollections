@@ -1,96 +1,95 @@
 package collections.mymap;
-import java.util.Objects;
 
 public class MyHashMap <Key, Value> implements HashMapInterface<Key, Value> {
-    private Node<Key, Value> next = null;
+    private static final int defaultSize = 16;
     private int size = 0;
+    private final Node<Key, Value>[] table;
 
     private static class Node<Key, Value> {
         private Node<Key, Value> next;
         private final Key key;
-        private Value value;
+        private final Value value;
 
         public Node(Key key, Value value){
             this.key = key;
             this.value = value;
         }
 
-        public Key getKey(){
-            return key;
-        }
+    }
 
-        public Value getValue(){
-            return value;
-        }
+    public MyHashMap(){
+        this(defaultSize);
+    }
 
-        public void setValue(Value value){
-            this.value = value;
-        }
+    public MyHashMap(int size){
+        if (size < 0)
+            throw new IllegalArgumentException("Invalid capacity: " + size);
 
+        table = new Node[size];
     }
 
     public void put(Key key, Value value) {
-        Node<Key, Value> nextNode = new Node<Key, Value>(key, value);
-        Node<Key, Value> lastNode = next;
+        if (key == null) return;
 
-        if (next == null){
-            next = nextNode;
+        int hash = hash(key);
+        Node<Key, Value> newNode = new Node<Key, Value>(key, value);
+
+        if (table[hash] == null){
+            table[hash] = newNode;
         } else{
+            Node<Key, Value> previous = null;
+            Node<Key, Value> current = table[hash];
 
-            while(lastNode.next != null){
-
-                if(lastNode.getKey().equals(key)){
-                    lastNode.setValue(value);
+            while(current != null){
+                if(current.key.equals(key)){
+                    newNode.next = current.next;
+                    if(previous==null){
+                        table[hash] = newNode;
+                    }
+                    else{
+                        previous.next = newNode;
+                    }
+                    return;
                 }
-
-                lastNode = lastNode.next;
+                previous = current;
+                current = current.next;
             }
 
-            lastNode.next = nextNode;
-
-            if(lastNode.getKey().equals(key)){
-                lastNode.setValue(value);
+            if (previous != null){
+                previous.next = newNode;
             }
-
         }
-
         size++;
-
     }
 
-    public void remove(Key key) {
-        Objects.checkIndex(getIndexByKey(key), size);
+    public boolean remove(Key key) {
+        int hash = hash(key);
 
-        int index = getIndexByKey(key);
-        int idx = 0;
+        if (table[hash] != null) {
+            Node<Key, Value> current = table[hash];
+            Node<Key, Value> previous = null;
 
-        Node<Key, Value> prevNode = null,
-                         lastNode = next,
-                         nextNode = null;
-
-        while(lastNode.next != null){
-            if (idx == index - 1){
-                prevNode = lastNode;
+            while(current != null){
+                if(current.key.equals(key)){
+                    if(previous == null){
+                        table[hash] = table[hash].next;
+                    } else{
+                        previous.next = current.next;
+                    }
+                    size--;
+                    return true;
+                }
+                previous = current;
+                current = current.next;
             }
-            if (idx == index){
-                nextNode = lastNode.next;
-            }
-            idx++;
-            lastNode = lastNode.next;
-
         }
-
-        if (prevNode != null){
-            prevNode.next = nextNode;
-        } else {
-            next = nextNode;
-        }
-
-        size--;
+        throw new IllegalArgumentException("Invalid key: " + key);
     }
 
     public void clear() {
-        next = null;
+        for (int i = 0; i < table.length; i++){
+            table[i] = null;
+        }
         size = 0;
     }
 
@@ -98,40 +97,21 @@ public class MyHashMap <Key, Value> implements HashMapInterface<Key, Value> {
         return size;
     }
 
-    public Object get(Key key){
-        Node<Key, Value> lastNode = next;
+    public Object get(Key key) {
+        int hash = hash(key);
 
-        while(lastNode.next != null){
-            if(lastNode.getKey().equals(key)){
-                return lastNode.getValue();
+        if (table[hash] != null) {
+            Node<Key, Value> current = table[hash];
+            while (current != null) {
+                if (current.key.equals(key))
+                    return current.value;
+                current = current.next;
             }
-            lastNode = lastNode.next;
         }
-
-        if(lastNode.getKey().equals(key)){
-            return lastNode.getValue();
-        }
-
-        throw new IllegalArgumentException("Invalid key");
+        throw new IllegalArgumentException("Invalid key: " + key);
     }
 
-
-    private int getIndexByKey(Key key){
-        Node<Key, Value> lastNode = next;
-        int i = 0;
-
-        while(lastNode.next != null){
-            if(lastNode.getKey().equals(key)){
-                return i;
-            }
-            i++;
-            lastNode = lastNode.next;
-        }
-
-        if(lastNode.getKey().equals(key)){
-            return i;
-        }
-
-        throw new IllegalArgumentException("Invalid key");
+    private int hash(Key key){
+        return Math.abs(key.hashCode()) % table.length;
     }
 }

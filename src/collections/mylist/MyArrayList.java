@@ -14,7 +14,6 @@ public class MyArrayList <Key> implements ListInterface <Key> {
         if (size < 0){
             throw new IllegalArgumentException("Invalid capacity");
         }
-
         objects = new Object[size];
     }
 
@@ -22,7 +21,6 @@ public class MyArrayList <Key> implements ListInterface <Key> {
         if (size >= objects.length){
             resizeArray(objects.length * 2);
         }
-
         objects[size++] = value;
     }
 
@@ -34,16 +32,13 @@ public class MyArrayList <Key> implements ListInterface <Key> {
 
     public void remove(int index){
         Objects.checkIndex(index, size);
-        Object[] temp = new Object[objects.length - 1];
-        int j = 0;
-
-        for (int i = 0; i < temp.length; i++){
-            if (index != i)
-                temp[j++] = objects[i];
+        for (int i = 0; i < size - 1; i++){
+            if (i >= index){
+                objects[i] = objects[i + 1];
+            }
         }
-
+        objects[size - 1] = null;
         size--;
-        objects = temp;
     }
 
     public int size(){
@@ -51,7 +46,7 @@ public class MyArrayList <Key> implements ListInterface <Key> {
     }
 
     public void clear(){
-        objects = new Object[0];
+        objects = new Object[defaultSize];
         size = 0;
     }
 
